@@ -1,58 +1,32 @@
-﻿using System.CommandLine;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace CronThumborCleaner;
 public class Program
 {
+    public static int DayCount = 1;
+    public static string PathTempFolder = "/tmp";
+    public static string GlobFilename = "tmp*";
+
     static void Main(string[] args)
     {
-        var pathArgs = new Option<string>(
-            name: "--path",
-            description: "Path of the folder",
-            getDefaultValue: () => { return "/tmp/"; });
-
-        var filenameArgs = new Option<string>(
-            name: "--filename",
-            description: "Filename targets in glob",
-            getDefaultValue: () => { return "tmp*"; });
-
-        var dayArgs = new Option<int>(
-            name: "--day",
-            description: "Maximum day of file created",
-            getDefaultValue: () => { return 1; });
-
-        // Notes for me. This using IEnumerable for registering args
-        var cmd = new RootCommand("App for cleaning thumbor cache")
-        {
-            dayArgs, pathArgs, filenameArgs
-        };
-        cmd.SetHandler(
-            Runner,
-            dayArgs, pathArgs, filenameArgs);
-
-        cmd.Invoke(args);
-    }
-
-    public static void Runner(int day, string path, string filename)
-    {
-        Logging.Info($"Starting the clock with {day} day delay.");
+        Logging.Info($"Starting the clock with {DayCount} day delay.");
         while (true)
         {
             // Set timer
             var now = DateTime.Now;
-            var nextDayDiff = now.AddDays(day) - now;
+            var nextDayDiff = now.AddDays(DayCount) - now;
             var timer = new System.Timers.Timer(nextDayDiff);
             var enabled = true;
             timer.Elapsed += (sender, e) => { enabled = false; };
 
             // Exec command
-            var command = $"find {path} -maxdepth 1 -name \"{filename}\" -mtime +{day} -type f -delete";
+            var command = $"find {PathTempFolder} -maxdepth 1 -name \"{GlobFilename}\" -mtime +{DayCount} -type f -delete";
             Logging.Info($"Executing command: {command}");
             ExecShell(command);
 
             // Reset and dispose timer
             timer.Start();
-            Logging.Info($"Waiting for next {day} day.");
+            Logging.Info($"Waiting for next {DayCount} day.");
             while (enabled) { }
             timer.Stop();
             timer.Dispose();
