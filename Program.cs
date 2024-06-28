@@ -39,7 +39,7 @@ public class Program
         {
             StartInfo = new ProcessStartInfo
             {
-                FileName = "bash",
+                FileName = "sh",
                 RedirectStandardInput = true,
                 RedirectStandardError = true,
                 RedirectStandardOutput = true,
