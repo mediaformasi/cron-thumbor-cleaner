@@ -15,9 +15,6 @@ public class Program
             // Set timer
             var now = DateTime.Now;
             var nextDayDiff = now.AddDays(DayCount) - now;
-            var timer = new System.Timers.Timer(nextDayDiff);
-            var enabled = true;
-            timer.Elapsed += (sender, e) => { enabled = false; };
 
             // Exec command
             var command = $"find {PathTempFolder} -maxdepth 1 -name \"{GlobFilename}\" -mtime +{DayCount} -type f -delete";
@@ -25,11 +22,8 @@ public class Program
             ExecShell(command);
 
             // Reset and dispose timer
-            timer.Start();
             Logging.Info($"Waiting for next {DayCount} day.");
-            while (enabled) { }
-            timer.Stop();
-            timer.Dispose();
+            Thread.Sleep(DayCount * 24 * 60 * 60 * 1000);
         }
     }
 
