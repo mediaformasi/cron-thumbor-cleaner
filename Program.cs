@@ -21,7 +21,7 @@ public class Program
             ExecShell(command);
 
             // Reset and dispose timer
-            Logging.Info($"Waiting for next {HourCount} day.");
+            Logging.Info($"Waiting for next {HourCount} hours.");
             Thread.Sleep(HourCount * 60 * 60 * 1000);
         }
     }
