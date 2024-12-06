@@ -3,27 +3,26 @@
 namespace CronThumborCleaner;
 public class Program
 {
-    public static int DayCount = 1;
+    public static int HourCount = 6;
     public static string PathTempFolder = "/tmp";
     public static string GlobFilename = "tmp*";
 
     static void Main(string[] args)
     {
-        Logging.Info($"Starting the clock with {DayCount} day delay.");
+        Logging.Info($"Starting the clock with {HourCount} day delay.");
         while (true)
         {
             // Set timer
             var now = DateTime.Now;
-            var nextDayDiff = now.AddDays(DayCount) - now;
 
             // Exec command
-            var command = $"find {PathTempFolder} -maxdepth 1 -name \"{GlobFilename}\" -mtime +{DayCount} -type f -delete";
+            var command = $"find {PathTempFolder} -maxdepth 1 -name \"{GlobFilename}\" -mmin +{HourCount * 60} -type f -delete";
             Logging.Info($"Executing command: {command}");
             ExecShell(command);
 
             // Reset and dispose timer
-            Logging.Info($"Waiting for next {DayCount} day.");
-            Thread.Sleep(DayCount * 24 * 60 * 60 * 1000);
+            Logging.Info($"Waiting for next {HourCount} day.");
+            Thread.Sleep(HourCount * 60 * 60 * 1000);
         }
     }
 
