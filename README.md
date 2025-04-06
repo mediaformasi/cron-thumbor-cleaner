@@ -1,2 +1,0 @@
-# Cron Thumber Cleaner
-Clean.
